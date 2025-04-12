@@ -9,8 +9,8 @@ class LandingPad():
 
     def is_carrying(self, obj_row, obj_col, width):
         if self.col <= obj_col <= self.col + self.width or self.col <= obj_col + width <= self.col + self.width:
-            return self.row == obj_row
-        
+            return abs(self.row - obj_row) <= 3
+                
         return False
 
 class LandingPadCollection():
@@ -18,7 +18,7 @@ class LandingPadCollection():
         self.collection = deque()
         self.row_limit = rows
         self.col_limit = cols
-        self.width = 50
+        self.width = 60
         self.max_row_distance_between_pads = 40
         self.start_row = start_row
         self.start_col = start_col

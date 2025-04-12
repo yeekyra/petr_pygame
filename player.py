@@ -1,21 +1,20 @@
 class Player():
-    def __init__(self, row, col, default_fall_rate):
+    def __init__(self, row, col, fall_rate, default_fall_rate):
         self.row = row
         self.col = col
         self.up_distance = 0
         self.command_left_right = 0
-        self.fall_rate = 2
+        self.fall_rate = fall_rate
         self.default_fall_rate = default_fall_rate
         self.used_jump = False
 
     def process_command(self, command_left, command_right, command_up):
-        if command_right:
-            self.command_left_right = 10
-        if command_left:
-            self.command_left_right = -10
-        if command_up and self.up_distance == 0 and not self.used_jump:
+        self.command_left_right += command_right
+        self.command_left_right += command_left
+
+        if command_up != 0 and not self.used_jump:
             self.used_jump = True
-            self.up_distance = -250
+            self.up_distance = command_up
 
     def update_location(self):
         # Update horizontal location
@@ -24,8 +23,8 @@ class Player():
 
         # Update vertical location
         if self.up_distance < 0:
-            self.row -= 10
-            self.up_distance += 10
+            self.row -= 20
+            self.up_distance += 20
 
     def constant_fall(self, on_pad):
         if on_pad:

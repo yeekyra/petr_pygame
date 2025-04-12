@@ -5,8 +5,8 @@ from player import Player
 
 ROWS = 960
 COLUMNS = 576
-WIDTH = 50
-HEIGHT = 50
+WIDTH = 40
+HEIGHT = 60
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
@@ -16,18 +16,25 @@ class Game():
         self.window = pygame.display.set_mode((COLUMNS, ROWS))
         pygame.display.set_caption("Petr Jump Game")
 
+        self.background = pygame.image.load("sky.jpg")
+        self.background = pygame.transform.scale(self.background, (COLUMNS, ROWS))
+
         self.shift = 1
         self.clock = pygame.time.Clock()
         start_row, start_col = ROWS // 2, COLUMNS / 2 - WIDTH / 2
-        self.player = Player(start_row, start_col, self.shift)
+
+        self.player_icon = pygame.image.load("ptr.jpg")
+        self.player_icon = pygame.transform.scale(self.player_icon, (WIDTH, HEIGHT))  
+
+        self.player = Player(start_row, start_col, 3, self.shift)
         self.landing_pads = LandingPadCollection(ROWS, COLUMNS, start_row + HEIGHT, start_col)
         self.player_died = False
         self.running = True
 
     def processInput(self):
-        self.command_right = False
-        self.command_left = False
-        self.command_up = False
+        self.command_right = 0
+        self.command_left = 0
+        self.command_up = 0
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -35,11 +42,11 @@ class Game():
                 break
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
-                    self.command_right = True
+                    self.command_right = 10
                 elif event.key == pygame.K_LEFT:
-                    self.command_left = True
+                    self.command_left = -10
                 elif event.key == pygame.K_UP:
-                    self.command_up = True
+                    self.command_up = -270
 
         self.player.process_command(self.command_left, self.command_right, self.command_up)
 
@@ -59,10 +66,10 @@ class Game():
             pygame.draw.rect(self.window, (0, 0, 255), (p.col, p.row, p.width, 10))
 
     def draw_player(self):
-        pygame.draw.rect(self.window, (255, 0, 0), (self.player.col, self.player.row, WIDTH, HEIGHT))
+        self.window.blit(self.player_icon, (self.player.col, self.player.row))
 
     def render(self):
-        self.window.fill((0, 0, 0))
+        self.window.blit(self.background, (0, 0))
         self.draw_player()
         self.draw_landing_pads()
         pygame.display.update()
